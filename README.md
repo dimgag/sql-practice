@@ -617,3 +617,82 @@ CREATE TABLE example(
 ```
 
 # Conditional Expressions and Procedures
+## CASE
+
+- We can use the CASE statement to only execute SQL code when certain conditions are met.
+- This is very similar to IF/ELSE statements in other programming languages.
+- There are two main ways to use a CASE statement, either a general CASE or a CASE expression.
+- Both methods can lead to the same results.
+
+```sql
+-- General Systax
+CASE
+	WHEN condition1 THEN result1
+	WHEN condition2 THEN result2
+	ELSE some_other_result
+END
+
+-- A more complete example:
+SELECT a
+CASE WHEN a = 1 THEN 'one'
+		 WHEN a = 2 THEN 'two'
+ELSE 'other'
+END 
+FROM test;
+```
+
+## COALESCE
+
+- The COALESCE function accepts an unlimited number of arguments. It returns the first argument that is not null. If all arguments are null, the COALENCE function will return null.
+    - COALENCE(arg_1, arg_2,…,arg_n)
+    
+    ```sql
+    -- Example:
+    SELECT COALENCE(1,2)
+    >> 1
+    -- 
+    SELECT COALENCE(NULL, 2, 3)
+    >> 2
+    ```
+    
+- The COALESCE function becomes useful when querying a table that contains null values and substituting it with another value.
+- HINT: Keep the COALESCE function in mind in case you encounter a table with null values that you want to perform operations on!
+
+## CAST
+
+- The CAST operator let’s you convert from one data type into another.
+- Keep in mind not every instance of a data type can be CAST data type, it must be reasonable to convert the data, for example ‘5’ to an integer will work, ‘five’ to an integer will not.
+
+```sql
+-- Example Syntax for CAST
+SELECT CAST('5' AS INTEGER)
+
+-- PostgreSQL CAST operator
+SELECT '5'::INTEGER
+
+-- Usage inside a SELECT Query
+SELECT CAST(data AS TIMESTAMP)
+FROM table_1
+```
+
+## NULLIF
+
+- The NULLIF function takes in 2 inputs and returns NULL if both are equal, otherwise it will returns the first argument passed.
+    
+    ```sql
+    -- Syntax:
+    NULLIF(arg1, arg2)
+    
+    -- Example:
+    NULLIF(10,12)
+    >> Return 10
+    ```
+    
+
+## Views
+
+- Often there are specific combinations of table and conditions that you find yourself using quite often for a project.
+- Instead of having to perform the same query and over again as a starting point, you can create a VIEW to quickly see this query with a simple call.
+- A VIEW is a database object that is of a stored query.
+- A view can be accessed as a virtual table in PostgreSQL.
+- Notice that a view does not store data physically, it simply sotres the query.
