@@ -327,3 +327,293 @@ SELECT column_name(s) FROM table1
 UNION
 SELECT column_name(s) FROM table2
 ```
+
+# Advanced SQL Commands
+
+## Timestamps and EXTRACT
+
+| TIME | Contains only time |
+| --- | --- |
+| DATE | Contains only date |
+| TIMESTAMP | Contains only time and date |
+| TIMESTAMPTZ | Contains only time, date and timezone |
+- Careful considerations should be made when designing a table and database and choosing a time data type.
+- Depending on the situation you may or may not need the full level of TIMESTAMPTZ
+- Remember, you can always remove historical information, but you can’t add it!
+
+### Functions and operations related to these specific data types:
+
+- TIMEZONE - SELECT TIMEZONE()
+- NOW - SELECT NOW()
+- TIMEOFDAY - SELECT TIMEOFDAY()
+- CURRENT_TIME - SELECT CURRENT_TIME()
+- CURRENT_DATE - SELECT CURRENT_DATE()
+
+## EXTRACT, AGE, TO_CHAR Functions
+
+### EXTRACT
+
+- Allows to extract or obtain a sub-component of a date value
+
+```sql
+-- Usage
+EXTRACT(YEAR FROM date_col)
+
+-- Calculates and returns the current age given a timestamp
+AGE(date_col)
+
+-- General function to convert data types to text
+TO_CHAR(date_col, 'mm-dd-yyyy')
+```
+
+### SUBQUERY
+
+- A sub query allows you to construct complex queries, essentially performing a query oooon the results of another query.
+- The syntax is straightforward and invlolves two SELECTED statements.
+
+```sql
+-- Example of a Sub-Query
+SELECT student, grade
+FROM test_scores
+WHERE grade > (SELECT AVG(grade) FROM test_scores)
+```
+
+### SELF-JOIN
+
+- A self-join is a query in which a table is joined to itself
+- Self-joins are useful for comapring values in a column of rows within the same table.
+- It can be viewed as a join of two copies of the same table
+- The table is not actually copied, but SQL performs the command as though it were.
+- There is no special keyword for a self join, its simply standard JOIN syntax wuth the same table in both parts.
+- BE CAREFUL: you should use an alias for the table.
+
+```sql
+-- Basic Syntax
+SELECT tableA.col, tableB.col
+FROM table as tableA
+JOIN table as tableB
+tableA.some_col = tableB.other_col
+```
+
+
+# Creating Databases & Tables
+
+## Data Types
+
+| DataType | Description |
+| --- | --- |
+| Boolean  | True of False |
+| Character | char, varchar, text |
+| Numeric | integer, float |
+| Temporal | date, time, timestamp and interval |
+| UUID | Universally Unique Identifiers |
+| Array | Stores an array of stings, numbers, etc. |
+| JSON | Json format data |
+| Hstore key | value pair |
+| Special Types | network address, geometric data, etc. |
+
+Documentation of Data Types: [postgresql.org/docs/current/datatype.html](http://postgresql.org/docs/current/datatype.html)
+
+## Primary and Foreign Keys
+
+- Primary and Foreign keys typically make good column choices for joining together two or more tables.
+- When creating tables and defining columns, we can use constraints to define columns as being a primary key, or attaching a foreign key relationship to another table.
+
+### PRIMARY KEY
+
+- A primary key is a column or a group of column or a group of columns used to udentify a row uniquely in a table.
+- Primary keys are also important since they allow us to easily discern what columns should be used for joining tables together.
+- Unique integer, NOT-NULL
+
+### FOREIGN KEY
+
+- A foreign key is a field or group of fields in a table that uniquely identifies a row in a another table.
+- A foreign key is defined in a table that references to the primary key of the other table.
+- The table that contains the foreign key is called referencing table or child table.
+- The table to which the foreign key references is called referenced table or parent table.
+- A table can have mulptiple foreign keys depending on its relationships with other tables.
+
+## Constraints
+
+- Constraints are the rules enforced on data columns on table.
+- These are used to prevent invalid data from being entered into the database. This ensures the accuracy and reliability of the data in the database.
+
+### Constraints Categories
+
+- Column Constraints
+    - Constraints the data in a column to adhere to certain conditions.
+- Table Constraints
+    - applied to the entire table rather than to an individual column.
+
+### Column **constraints:**
+
+| Constraint | Description |
+| --- | --- |
+| NOT NULL | Ensures that a column cannot have NULL value. |
+| UNIQUE | Ensures that all values in a column are different. |
+| PRIMARY Key | Uniquely identifies each row/record in a database table. |
+| FOREIGN Key | Constraints data based on columns in other tables. |
+| CHECK | Ensures that all values in a column satisfy certain conditions. |
+| EXCLUSION | Ensures that if any two rows are compared on the specified operator, not all of these comparisons will return TRUE |
+
+### Table **constraints:**
+
+| Constraint | Description |
+| --- | --- |
+| CHECK (Condition) | To check a condition when insterting or updating data |
+| REFERENCES | To constrain the value stored in the column that must exist in a column in another table. |
+| UNIQUE (Column list) | forces the values stored in the columns listed inside the parentheses to be unique. |
+| PRIMARY Key (Column list) | Allows you to define the primary key that consists of multiple columns. |
+
+## CREATE Tables
+
+```sql
+-- Full General Syntax
+CREATE TABLE table_name(
+	column_name TYPE column_constraint,
+	column_name TYPE column_constraint,
+	table_constraint table_constraint,
+) INHERITS existing_table_name;
+```
+
+```sql
+-- Example creating a simple table
+CREATE TABLE account(
+	user_id SERIAL PRIMARY KEY, -- SERIAL creates the integer id
+	username VARCHAR(50) UNIQUE NOT NULL,
+	password VARCHAR(50) NOT NULL,
+	email VARCHAR(250) UNIQUE NOT NULL,
+	create_on TIMESTAMP NOT NULL, 
+	last_login TIMESTAMP
+) INHERITS account;
+```
+
+- Create more tables and link them:
+
+```sql
+-- Create table and link it with other tables in your database
+-- You should not use SERIAL - Use INTEGER instead
+CREATE TABLE account_job(
+	user_id INTEGER REFERENCES account(used_id), -- Foreign key reference from account table
+	job_id INTEGER REFERENCES jobs(job_id) -- Foreign Key
+)
+```
+
+## INSERT Command
+
+- Allows to add in rows to a table
+
+```sql
+-- Basic Syntax
+INSERT INTO table(column1, column2,...)
+VALUES
+	(value1, value2, ...),
+	(value1, value2, ...),...;
+
+-- Basic Syntax with SELECT
+INSERT INTO table(column1, column2,...)
+SELECT column1, column2,...
+FROM another_table
+WHERE condition;
+```
+
+## UPDATE
+
+- The UPDATE keyword allows for the changing of values of the columns in a table.
+
+```sql
+-- General Syntax
+UPDATE table
+SET column1 = value1,
+	column2 = value2,...
+WHERE
+	condition;
+
+-- Return affected rows:
+UPDATE account
+SET last_login = created_on
+RETURNING account_id, last_login
+```
+
+## DELETE
+
+```sql
+-- We can use the DELETE clause to remove rows from a table:
+DELETE FROM table
+WHERE row_id = 1
+
+-- We can delete rows based on their presence in other tables:
+DELETE FROM tableA
+USING tableB
+WHERE tableA.id = tableB.id
+
+-- DELETE all rows from a table: 
+DELETE FROM table
+```
+
+## ALTER Table
+
+- Allows for changes to an existing table structure, such as:
+    - Adding, dropping, or renaming columns
+    - Changing a column’s data type
+    - Set DEFAULT values for a column
+    - Add CHECK constraints
+    - Rename table
+
+```sql
+-- Adding Columns
+ALTER TABLE table_name
+ADD COLUMN new_col TYPE
+
+-- Remove Columns
+ALTER TABLE table_name
+DROP COLUMN new_col
+
+-- Alter Constraints
+ALTER TABLE table_name
+ALTER COLUMN col_name
+SET DEFAULT value / DROP DEFAULT / SET NOT NULL / DROP NOT NULL / ADD CONSTRAINT constraint
+```
+
+## DROP Table
+
+- Complete removal of a column in a table.
+- In PostgreSQL this will also automatically remove all of its indexes and constraints involving the column
+- However, it will not remove columns used in views, triggers, or stored procedures without the additional CASCADE clause.
+
+```sql
+-- Drop a column
+ALTER TABLE table_name
+DROP COLUMN col_name
+
+-- To remove all these dependencies
+ALTER TABLE table_name
+DROP COLUMN col_name CASCADE
+
+-- Check for existence to avoid error
+ALTER TABLE table_name
+DROP COLUMN IF EXISTS col_name
+
+-- Drop muplitple column
+ALTER TABLE table_name
+DROP COLUMN col_name1
+DROP COLUMN col_name2
+DROP COLUMN col_name3
+. . .
+```
+
+## CHECK Constraint
+
+- The CHECK constraint allows us to create more customized constraints that adhere to a certain condition.
+- Such as making sure all inserted integer values fall below a certain threshold.
+
+```sql
+-- General Systax
+CREATE TABLE example(
+	ex_id SERIAL PRIMARY KEY, 
+	age SMALLINT CHECK (age>21),
+	parent_age SMALLINT CHECK (parent_age>age)
+);
+```
+
+# Conditional Expressions and Procedures
