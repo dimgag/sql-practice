@@ -5,8 +5,6 @@ This repository contains notes and queries with SQL. The purpose of this reposit
 <!-- Table of contents -->
 ## Table of Contents
 
-
-
 - [Cheat Sheet](#cheat-sheet)
 - [SQL Statement Fundamentals](#sql-statement-fundamentals)
     * [SELECT](#select)
@@ -27,8 +25,35 @@ This repository contains notes and queries with SQL. The purpose of this reposit
     * [OUTER JOIN](#outer-join)
     * [FULL JOIN](#full-join)
     * [UNION](#union)
+- [Advanced SQL Commands](#advanced-sql-commands)
+    * [Timestamps and EXTRACT](#timestamps-and-extract)
+    * [EXTRACT, AGE, TO_CHAR Functions](#extract-age-to-char-functions)
+    * [SUBQUERY](#subquery)
+    * [SELF JOIN](#self-join)
 
 
+- [Creating Databases & Tables](#creating-databases--tables)
+    * [Data Types](#data-types)
+    * [Primary and Foreign Keys](#primary-and-foreign-keys)
+    * [PRIMARY KEY](#primary-key)
+    * [FOREIGN KEY](#foreign-key)
+    * [Constraints](#constraints)
+    * [Column Constraints](#column-constraints)
+    * [Table Constraints](#table-constraints)
+    * [CREATE Tables](#create-tables)
+    * [INSERT Command](#insert-command)
+    * [UPDATE](#update)
+    * [DELETE](#delete)
+    * [ALTER Table](#alter-table)
+    * [DROP Table](#drop-table)
+    * [CHECK Constraint](#check-constraint)
+    
+- [Conditional Expressions and Procedures](#conditional-expressions-and-procedures)
+    * [CASE](#case)
+    * [COALESCE](#coalesce)
+    * [CAST](#cast)
+    * [NULLIF](#nullif)
+    * [VIEWS](#views)
 
 
 
@@ -689,7 +714,7 @@ FROM table_1
     ```
     
 
-## Views
+## VIEWS
 
 - Often there are specific combinations of table and conditions that you find yourself using quite often for a project.
 - Instead of having to perform the same query and over again as a starting point, you can create a VIEW to quickly see this query with a simple call.
